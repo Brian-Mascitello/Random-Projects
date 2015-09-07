@@ -22,12 +22,14 @@ struct Card
 Card Deck[deck_size]; // 52 cards in a deck, no jokers! Filled with buildDeck();
 Card PlayerHand[hand_size]; // Players can have up to 5 cards at a time.
 
+HANDLE screen = GetStdHandle(STD_OUTPUT_HANDLE); // Used to change font colors.
+
 char last_char = ' '; // Used to prevent re-entering play mode after escaping on continue screen.
 
 using namespace std;
 
 // All functions are void, mainly used for displaying information.
-void branching(char char_user_input);
+void branchingMenu(char char_user_input);
 void buildDeck();
 void changeBet();
 void changeCards();
@@ -58,7 +60,7 @@ void main()
 	mainMenu();
 }
 
-void branching(char char_user_input)
+void branchingMenu(char char_user_input)
 {
 	// This is the main menu selection function. It takes the char value from mainMenu()
 	// and uses it in a switch statement to enter the next appropriate function.
@@ -86,7 +88,7 @@ void branching(char char_user_input)
 		case 'p':
 			if (total_credits < minimum_bet)
 			{
-				clear_screen();
+				clearScreen();
 				cout << "\n You do not have enough credits to continue!\n";
 				purchaseCredits();
 			}
@@ -97,7 +99,6 @@ void branching(char char_user_input)
 			}
 			else
 			{
-				flush();
 				do
 				{
 					runGame();
@@ -175,20 +176,20 @@ void changeBet()
 
 	if (changeBet < minimum_bet)
 	{
-		cout << "\n You must bet at least " << minimum_bet << " credits.\n";
+		cout << "\n You must bet at least " << minimum_bet << " credits.";
 	}
 	else if (changeBet > total_credits)
 	{
-		cout << "\n You do not have enough credits.\n";
+		cout << "\n You do not have enough credits to bet " << changeBet << ".";
 	}
 	else if (changeBet > maximum_bet)
 	{
-		cout << "\n You cannot bet more than " << maximum_bet << " credits.\n";
+		cout << "\n You cannot bet more than " << maximum_bet << " credits.";
 	}
 	else
 	{
 		current_bet = changeBet;
-		cout << "\n Current bet successfully changed to " << current_bet << ".\n";
+		cout << "\n Current bet successfully changed to " << current_bet << ".";
 	}
 
 	cleanReset();
@@ -202,7 +203,10 @@ void changeCards()
 	string truncated_user_string = "";
 	string string_user_input = "";
 
+	SetConsoleTextAttribute(screen, 249);
 	cout << "\n\n\n\n\n\n Enter the numbers to discard ---> ";
+	SetConsoleTextAttribute(screen, 240);
+
 	getline(cin, string_user_input);
 	truncated_user_string = string_user_input.substr(0, 5);
 	stringstream convert(truncated_user_string);
@@ -237,9 +241,8 @@ void cleanReset()
 	// Waits for the user to enter something, then returns to the main menu.
 
 	cout << "\n\n Press enter to continue ---> ";
-	flush();
-	getchar(); // Left intentionally so the user can see output before screen erased.
-	clear_screen();
+	flushBuffer();
+	clearScreen();
 	mainMenu();
 }
 
@@ -252,11 +255,13 @@ void continuePrompt()
 	cout << "\n Press enter to continue ---> ";
 	continue_if_newline = getchar();
 
-	clear_screen();
+	clearScreen();
 
 	if (continue_if_newline != '\n')
 	{
 		last_char = 'q';
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		mainMenu();
 	}
 }
@@ -373,10 +378,21 @@ void mainMenu()
 	char_user_input = tolower(char_user_input);
 	last_char = char_user_input;
 
-	if (char_user_input != 'q') {
-		clear_screen();
+	cin.clear();
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	clearScreen();
+	
+	if (char_user_input == 'b' || char_user_input == 'c' || char_user_input == 'h' ||
+		char_user_input == 'l' || char_user_input == 'p' || char_user_input == 's') {
 		srand(unsigned(time(NULL)));
-		branching(char_user_input);
+		branchingMenu(char_user_input);
+	}
+	else if (char_user_input == 'q') {
+
+	}
+	else {
+		cout << "\n Please enter a letter corresponding to a menu option.\n";
+		mainMenu();
 	}
 }
 
@@ -386,8 +402,6 @@ void printHand()
 	// Also converts the higher card values to text so the user can read them appropriately.
 
 	int print_index;
-
-	HANDLE screen = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	if (initial)
 	{
@@ -462,7 +476,7 @@ void printRules()
 	cout << "\n The minimum bet is " << minimum_bet << " credits.";
 	cout << "\n The maximum bet is " << maximum_bet << " credits.";
 	cout << "\n\n If your credit balance falls below the minimum bet, ";
-	cout << "\n you must add more to continue playing.\n";
+	cout << "\n you must add more to continue playing.";
 	cleanReset();
 }
 
@@ -474,7 +488,7 @@ void purchaseCredits()
 
 	if (total_credits >= 1000)
 	{
-		cout << "\n You may only add to your balance if you are below " << one_thousand << " credits.\n";
+		cout << "\n You may only add to your balance if you are below " << one_thousand << " credits.";
 	}
 	else
 	{
@@ -490,17 +504,22 @@ void purchaseCredits()
 		}
 		else
 		{
-			if (add_credits < (minimum_bet - total_credits))
+			if (add_credits < 1)
+			{
+				cout << "\n You may only add a positive credit amount.";
+			}
+			else if (add_credits < (minimum_bet - total_credits))
 			{
 				cout << "\n You must buy enough credits to play at least once!";
 			}
-			else if (add_credits >(one_thousand - total_credits))
+			else if (add_credits > (one_thousand - total_credits))
 			{
-				cout << "\n You may only buy up to " << one_thousand << " credits." << endl;
+				cout << "\n You may only buy up to " << one_thousand << " credits.";
 			}
 			else
 			{
 				total_credits += add_credits;
+				cout << "\n Total credits is now " << total_credits << ".";
 			}
 		}
 	}
@@ -528,7 +547,7 @@ void runGame()
 	dealHand();
 	printHand();
 	changeCards();
-	clear_screen();
+	clearScreen();
 	printHand();
 	sortHand();
 	winningConditions();

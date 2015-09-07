@@ -1,10 +1,8 @@
 #pragma once
-// HEADER GUARDS
-#ifndef DADCARDHEADER_H
-#define DADCARDHEADER_H
 
-// C WARNINGS
-#pragma warning(disable: 4996)
+// HEADER GUARDS
+#ifndef HEADER_H
+#define HEADER_H
 
 // INCLUDES
 #include <algorithm>
@@ -21,10 +19,11 @@
 // MACROS
 #define deck_size 52
 #define hand_size 5
-#define one_thousand 1000
 #define maximum_bet 10000
 #define minimum_bet 5
 #define number_of_suits 4
+#define one_hundred 100
+#define one_thousand 1000
 #define values_per_suit 13
 #undef max
 
@@ -32,18 +31,17 @@
 bool initial = true;
 const char* suit_names[] = { "Clubs", "Diamonds", "Hearts", "Spades" };
 const char* suit_symbols[] = { "\x05", "\x04", "\x03", "\x06" };
-int current_bet = 100;
+int current_bet = one_hundred;
 int total_credits = one_thousand;
 enum suit { Clubs, Diamonds, Hearts, Spades };
 
 // FORWARD DECLARATIONS
-void clear_screen();
+void clearScreen();
 void flush();
-void print_char(short x, short y, char c);
-void print_string(short x, short y, const char* str);
+void printChar(short x, short y, char c);
 
 // HEADER FUNCTIONS
-void clear_screen()
+void clearScreen()
 {
 	short x, y;
 
@@ -51,12 +49,12 @@ void clear_screen()
 	{
 		for (y = 30; y >= 0; y--)
 		{
-			print_char(x, y, ' ');
+			printChar(x, y, ' ');
 		}
 	}
 }
 
-void flush()
+void flushBuffer()
 {
 	int clear = getchar();
 
@@ -64,22 +62,16 @@ void flush()
 	{
 		clear = getchar();
 	}
+
+	getchar(); // Left intentionally so the user can see output before screen erased.
 }
 
-void print_char(short x, short y, char c)
+void printChar(short x, short y, char c)
 {
 	COORD pos = { x, y };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 
 	printf("%c", c);
-}
-
-void print_string(short x, short y, const char* str)
-{
-	COORD pos = { x, y };
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-
-	printf("%s", str);
 }
 
 #endif
