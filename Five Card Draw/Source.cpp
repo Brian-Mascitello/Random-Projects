@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
 AUTHOR:			Brian Mascitello
-DATE:			9/27/2015
+DATE:			9/28/2015
 EXERCISE:		C++ Practice
 SPECIFICATION:	This program simulates a poker variant known
 	as "Five Card Draw".
@@ -607,10 +607,10 @@ void highScoresSave()
 	FILE *fileName;
 	Record *node;
 
-	char *date_converted = new char[MAX_DATE_LENGTH];
+	char *date_converted = new char[10];
 	char *initials_converted = new char[MAX_INITIALS_LENGTH];
 	char *score_converted = new char[MAX_SCORE_LENGTH];
-	char *win_converted = new char[MAX_WIN_LENGTH];
+	char *win_converted = new char[1];
 	
 	int score_holder = 0;
 	int win_holder = 0;
@@ -627,7 +627,7 @@ void highScoresSave()
 			date_holder = node->getDate();
 			string_holder = std::to_string(date_holder);
 			std::strcpy(date_converted, string_holder.c_str());
-			fwrite(date_converted, MAX_DATE_LENGTH, 1, fileName);
+			fwrite(date_converted, 10, 1, fileName);
 
 			fwrite(",", sizeof(','), 1, fileName);
 
@@ -647,7 +647,7 @@ void highScoresSave()
 			win_holder = node->getWin();
 			string_holder = std::to_string(win_holder);
 			std::strcpy(win_converted, string_holder.c_str());
-			fwrite(win_converted, MAX_WIN_LENGTH, 1, fileName);
+			fwrite(win_converted, 1, 1, fileName);
 
 			node = node->nextRecordNode;
 			fwrite("\n", sizeof('\n'), 1, fileName);
