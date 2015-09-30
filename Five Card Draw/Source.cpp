@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
 AUTHOR:			Brian Mascitello
-DATE:			9/28/2015
+DATE:			9/30/2015
 EXERCISE:		C++ Practice
 SPECIFICATION:	This program simulates a poker variant known
 	as "Five Card Draw".
@@ -26,13 +26,17 @@ class Record
 
 	public:
 		Record();
-		Record(time_t input_date, std::string input_initials, int input_score, int input_win);
+		Record(int input_cheat, time_t input_date,
+			std::string input_initials, int input_score, int input_win);
+		~Record();
 
+		int getCheat();
 		time_t getDate();
 		std::string getInitials();
 		int getScore();
 		int getWin();
 
+		void setCheat(int input_cheat);
 		void setDate(time_t input_date);
 		void setInitials(std::string input_initials);
 		void setScore(int input_score);
@@ -41,6 +45,7 @@ class Record
 		Record* nextRecordNode;
 
 	private:
+		int cheat;
 		char initials[MAX_INITIALS_LENGTH];
 		int score;
 		int win;
@@ -53,12 +58,24 @@ Record::Record()
 
 }
 
-Record::Record(time_t input_date, std::string input_initials, int input_score, int input_win)
+Record::Record(int input_cheat, time_t input_date,
+	std::string input_initials, int input_score, int input_win)
 {
+	cheat = input_cheat;
 	date = input_date;
 	std::strcpy(initials, input_initials.c_str());
 	score = input_score;
 	win = input_win;
+}
+
+Record::~Record()
+{
+
+}
+
+int Record::getCheat()
+{
+	return cheat;
 }
 
 time_t Record::getDate()
@@ -79,6 +96,11 @@ int Record::getScore()
 int Record::getWin()
 {
 	return win;
+}
+
+void Record::setCheat(int input_cheat)
+{
+	cheat = input_cheat;
 }
 
 void Record::setDate(time_t input_date)
@@ -107,6 +129,7 @@ Card PlayerHand[HAND_SIZE]; // Players can have up to 5 cards at a time.
 HANDLE screen = GetStdHandle(STD_OUTPUT_HANDLE); // Used to change font colors.
 
 char last_char = ' '; // Used to prevent re-entering play mode after escaping on continue screen.
+int cheater = 0;
 int biggest_win = 0;
 int max_credits = ONE_THOUSAND;
 
@@ -117,14 +140,17 @@ void branchingMenu(char char_user_input);
 void buildDeck();
 void changeBet();
 void changeCards();
+void cheatCode();
 void cleanReset();
 void continuePrompt();
-void createHighScoresList(time_t input_date, string input_initials, int input_score, int input_win);
 void dealHand();
 void discardCard(int position);
 void freePointer(Record* node);
 string getInitialsFromUser();
 void highScoresAdd();
+void highScoresAddPreset(int cheat, int score, int win, string initials, time_t date);
+void highScoresBuilder();
+void highScoresCreateList(int in_cheat, int in_score, int in_win, string in_initials, time_t in_date);
 void highScoresLoad();
 void highScoresSave();
 void highScoresView();
@@ -340,6 +366,30 @@ void changeCards()
 	string_user_input = "";
 }
 
+void cheatCode()
+{
+	// If the cheat code is entered, give the user one million credits.
+	// Shows "Cheats enabled" on high scores list when saved.
+
+	cheater = 1;
+
+	if (max_credits < ONE_MILLION)
+	{
+		max_credits = ONE_MILLION;
+	}
+
+	if (total_credits < ONE_MILLION)
+	{
+		total_credits = ONE_MILLION;
+	}
+
+	cout << "\n Secret Cheat Screen";
+	cout << "\n -------------------";
+	cout << "\n\n Total Credits set to 1,000,000!";
+
+	cleanReset();
+}
+
 void cleanReset()
 {
 	// Waits for the user to enter something, then returns to the main menu.
@@ -367,55 +417,6 @@ void continuePrompt()
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		mainMenu();
-	}
-}
-
-void createHighScoresList(time_t input_date, string input_initials, int input_score, int input_win)
-{
-	// Helper function which takes the data from highScoresLoad() and inserts it into a linked list.
-
-	Record *newRecordNode;
-	newRecordNode = new Record(input_date, input_initials, input_score, input_win);
-
-	if (newRecordNode == NULL)
-	{
-		cout << "Out of Memory\n";
-	}
-	else
-	{
-		if (headRecordNode == NULL)
-		{
-			headRecordNode = newRecordNode;
-		}
-		else
-		{
-			Record *currentHubNode = headRecordNode;
-			Record *trailHubNode = NULL;
-
-			while (currentHubNode != NULL)
-			{
-				if (newRecordNode->getScore() > currentHubNode->getScore())
-				{
-					break;
-				}
-				else
-				{
-					trailHubNode = currentHubNode;
-					currentHubNode = currentHubNode->nextRecordNode;
-				}
-			}
-
-			if (currentHubNode == headRecordNode)
-			{
-				newRecordNode->nextRecordNode = headRecordNode;
-				headRecordNode = newRecordNode;
-			}
-			else
-			{
-				newRecordNode->nextRecordNode = currentHubNode;
-				trailHubNode->nextRecordNode = newRecordNode;
-			}
-		}
 	}
 }
 
@@ -532,6 +533,7 @@ void highScoresAdd()
 	Record **trail_pointer = &headRecordNode;
 
 	add_pointer = (Record *) malloc (sizeof(Record));
+	add_pointer->setCheat(cheater);
 	add_pointer->setDate(now);
 	add_pointer->setInitials(name);
 	add_pointer->setScore(max_credits);
@@ -562,16 +564,130 @@ void highScoresAdd()
 	}
 }
 
+void highScoresAddPreset(int cheat, int score, int win, string initials, time_t date)
+{
+	// Similar to highScoresAdd() but constructs a high score list if there
+	// is no file detected with data I manually placed into the game.
+
+	Record *add_pointer;
+	Record *search_pointer = headRecordNode;
+	Record **trail_pointer = &headRecordNode;
+
+	add_pointer = (Record *) malloc (sizeof(Record));
+	add_pointer->setCheat(cheat);
+	add_pointer->setDate(date);
+	add_pointer->setInitials(initials);
+	add_pointer->setScore(score);
+	add_pointer->setWin(win);
+
+	if (add_pointer == NULL)
+	{
+		cout << "\n Out of memory! \n";
+	}
+	else
+	{
+		if (search_pointer == NULL)
+		{
+			add_pointer->nextRecordNode = headRecordNode;
+			headRecordNode = add_pointer;
+		}
+		else
+		{
+			while (search_pointer != NULL && search_pointer->getScore() >= add_pointer->getScore())
+			{
+				trail_pointer = &search_pointer->nextRecordNode;
+				search_pointer = search_pointer->nextRecordNode;
+			}
+
+			*trail_pointer = add_pointer;
+			add_pointer->nextRecordNode = search_pointer;
+		}
+	}
+}
+
+void highScoresBuilder()
+{
+	// Builds a Linked List of High Scores if one does not already exist.
+	// Lowest score first for fastest building.
+
+	highScoresAddPreset(0, 1000, 0, "ASU", 1416000000);
+	highScoresAddPreset(0, 1250, 1, "ODA", 1418000000);
+	highScoresAddPreset(0, 1500, 1, "NDS", 1420000000);
+	highScoresAddPreset(0, 2000, 1, "ADA", 1422000000);
+	highScoresAddPreset(0, 2500, 2, "MYD", 1424000000);
+	highScoresAddPreset(0, 3000, 2, "FOR", 1426000000);
+	highScoresAddPreset(0, 3500, 2, "LLO", 1428000000);
+	highScoresAddPreset(0, 4000, 3, "ITE", 1430000000);
+	highScoresAddPreset(0, 4500, 3, "ASC", 1432000000);
+	highScoresAddPreset(0, 5000, 4, "ANM", 1434000000);
+	highScoresAddPreset(0, 6000, 5, "BRI", 1436000000);
+	highScoresAddPreset(0, 7000, 6, "DBY", 1438000000);
+	highScoresAddPreset(0, 8000, 7, "ATE", 1440000000);
+	highScoresAddPreset(0, 9000, 8, "CRE", 1442000000);
+	highScoresAddPreset(0, 10000, 9, "BTM", 1443500000);
+}
+
+void highScoresCreateList(int in_cheat, int in_score, int in_win, string in_initials, time_t in_date)
+{
+	// Helper function which takes the data from highScoresLoad() and inserts it into a linked list.
+
+	Record *newRecordNode;
+	newRecordNode = new Record(in_cheat, in_date, in_initials, in_score, in_win);
+
+	if (newRecordNode == NULL)
+	{
+		cout << "Out of Memory\n";
+	}
+	else
+	{
+		if (headRecordNode == NULL)
+		{
+			headRecordNode = newRecordNode;
+		}
+		else
+		{
+			Record *currentHubNode = headRecordNode;
+			Record *trailHubNode = NULL;
+
+			while (currentHubNode != NULL)
+			{
+				if (newRecordNode->getScore() > currentHubNode->getScore())
+				{
+					break;
+				}
+				else
+				{
+					trailHubNode = currentHubNode;
+					currentHubNode = currentHubNode->nextRecordNode;
+				}
+			}
+
+			if (currentHubNode == headRecordNode)
+			{
+				newRecordNode->nextRecordNode = headRecordNode;
+				headRecordNode = newRecordNode;
+			}
+			else
+			{
+				newRecordNode->nextRecordNode = currentHubNode;
+				trailHubNode->nextRecordNode = newRecordNode;
+			}
+		}
+	}
+}
+
 void highScoresLoad()
 {
 	// Extracts the data from the high scores save file and puts it into a linked list.
 
+	int cheat = 0;
 	int score = 0;
 	int win = 0;
-	string initials = "";
+	string cheat_string = "";
 	string date_string = "";
 	string score_string = "";
 	string win_string = "";
+	string initials = "";
 	time_t date = 0;
 
 	ifstream highScoresLoad(HIGH_SCORES);
@@ -582,6 +698,9 @@ void highScoresLoad()
 		while (getline(highScoresLoad, line))
 		{
 			istringstream parsed(line);
+
+			getline(parsed, cheat_string, ',');
+			istringstream(cheat_string) >> cheat;
 
 			getline(parsed, date_string, ',');
 			istringstream(date_string) >> date;
@@ -594,10 +713,15 @@ void highScoresLoad()
 			getline(parsed, win_string, ',');
 			istringstream(win_string) >> win;
 
-			createHighScoresList(date, initials, score, win);
+			highScoresCreateList(cheat, score, win, initials, date);
 		}
-		highScoresLoad.close();
 	}
+	else
+	{
+		highScoresBuilder();
+	}
+
+	highScoresLoad.close();
 }
 
 void highScoresSave()
@@ -607,11 +731,14 @@ void highScoresSave()
 	FILE *fileName;
 	Record *node;
 
+	char *cheat_converted = new char[1];
 	char *date_converted = new char[10];
 	char *initials_converted = new char[MAX_INITIALS_LENGTH];
 	char *score_converted = new char[MAX_SCORE_LENGTH];
 	char *win_converted = new char[1];
-	
+
+	int cheat_holder = 0;
+	int counter = 0; // Limits output file to ONE_HUNDRED lines.
 	int score_holder = 0;
 	int win_holder = 0;
 	std::string string_holder = "";
@@ -622,8 +749,15 @@ void highScoresSave()
 	if (fileName != NULL)
 	{
 		node = headRecordNode;
-		while (node != NULL)
+		while (node != NULL && counter < ONE_HUNDRED)
 		{
+			cheat_holder = node->getCheat();
+			string_holder = std::to_string(cheat_holder);
+			std::strcpy(cheat_converted, string_holder.c_str());
+			fwrite(cheat_converted, 1, 1, fileName);
+
+			fwrite(",", sizeof(','), 1, fileName);
+
 			date_holder = node->getDate();
 			string_holder = std::to_string(date_holder);
 			std::strcpy(date_converted, string_holder.c_str());
@@ -651,6 +785,7 @@ void highScoresSave()
 
 			node = node->nextRecordNode;
 			fwrite("\n", sizeof('\n'), 1, fileName);
+			counter++;
 		}
 	}
 	else
@@ -672,9 +807,9 @@ void highScoresView()
 	}
 	else
 	{
-		cout << "\n              High Scores!!!!";
-		cout << "\n -----------------------------------------";
-		cout << "\n\n Rank) Initials | Score | Best Hand | Date\n";
+		cout << "\n                               High Scores!!!!";
+		cout << "\n ---------------------------------------------------------------------------";
+		cout << "\n\n Initials | Maximum Score | Best Hand Earned |  Date Won  |  Secret Column\n";
 
 		while (view_pointer && counter < 16)
 		{
@@ -704,20 +839,31 @@ void highScoresView()
 				cout << "\n " << counter << ") ";
 			}
 
-			cout << view_pointer->getInitials() << " | ";
+			cout << view_pointer->getInitials() << "  | ";
 			cout << std::setw(MAX_SCORE_LENGTH) << view_pointer->getScore() << " | ";
 			cout << std::setw(MAX_WIN_LENGTH) << orderPrizes(view_pointer->getWin()) << " | ";
 			
 			time_t date_node = view_pointer->getDate();
 			tm convert_date = *localtime(&date_node);
 
-			if (convert_date.tm_mon < 9)
+			if (convert_date.tm_mon < 9 && convert_date.tm_mday < 10)
 			{
-				cout << " " << convert_date.tm_mon + 1 << "/" << convert_date.tm_mday << "/" << convert_date.tm_year + 1900;
+				cout << "  ";
+			}
+			else if (convert_date.tm_mon < 9 || convert_date.tm_mday < 10)
+			{
+				cout << " ";
+			}
+
+			cout << convert_date.tm_mon + 1 << "/" << convert_date.tm_mday << "/" << convert_date.tm_year + 1900;
+
+			if (view_pointer->getCheat() == 1)
+			{
+				cout << " | Cheats enabled! ";
 			}
 			else
 			{
-				cout << convert_date.tm_mon + 1 << "/" << convert_date.tm_mday << "/" << convert_date.tm_year + 1900;
+				cout << " |                 ";
 			}
 			
 			view_pointer = view_pointer->nextRecordNode;
@@ -736,6 +882,7 @@ void mainMenu()
 	// typing a character.
 
 	char char_user_input = ' ';
+	string string_user_input = "";
 	last_char = ' ';
 
 	cout << "\n Welcome to Brian's Five Card Draw!!!";
@@ -752,7 +899,8 @@ void mainMenu()
 	cout << "\n Q) Quit";
 	cout << "\n\n Please enter a choice ---> ";
 
-	cin >> char_user_input;
+	cin >> string_user_input;
+	char_user_input = string_user_input.at(0);
 	char_user_input = tolower(char_user_input);
 	last_char = char_user_input;
 
@@ -760,13 +908,19 @@ void mainMenu()
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	clearScreen();
 	
-	if (char_user_input == 'b' || char_user_input == 'c' || char_user_input == 'h' ||
+	if (string_user_input == "Cheato")
+	{
+		cheatCode();
+	}
+	else if (char_user_input == 'b' || char_user_input == 'c' || char_user_input == 'h' ||
 		char_user_input == 'l' || char_user_input == 'p' || char_user_input == 's' ||
-		char_user_input == 'v') {
+		char_user_input == 'v')
+	{
 		srand(unsigned(time(NULL)));
 		branchingMenu(char_user_input);
 	}
-	else if (char_user_input == 'q') {
+	else if (char_user_input == 'q')
+	{
 
 	}
 	else {
