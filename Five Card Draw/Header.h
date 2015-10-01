@@ -21,16 +21,16 @@
 #define DECK_SIZE 52
 #define HAND_SIZE 5
 #define HIGH_SCORES "FCD_HighScores.dat"
-#define MAX_DATE_LENGTH 16
+#define MAX_DATE_LENGTH 10
 #define MAX_INITIALS_LENGTH 3
-#define MAX_SCORE_LENGTH 13
+#define MAX_SCORE_LENGTH 10
 #define MAX_WIN_LENGTH 16
 #define MAXIMUM_BET 10000
 #define MINIMUM_BET 5
 #define NUMBER_OF_SUITS 4
 #define ONE_HUNDRED 100
-#define ONE_THOUSAND 1000
 #define ONE_MILLION 1000000
+#define ONE_THOUSAND 1000
 #define VALUES_PER_SUIT 13
 #undef max
 

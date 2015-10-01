@@ -26,27 +26,28 @@ class Record
 
 	public:
 		Record();
-		Record(int input_cheat, time_t input_date,
-			std::string input_initials, int input_score, int input_win);
+		Record(int in_cheat, int in_score, int in_win,
+			std::string in_initials, time_t in_date);
 		~Record();
 
 		int getCheat();
-		time_t getDate();
-		std::string getInitials();
 		int getScore();
 		int getWin();
-
+		std::string getInitials();
+		time_t getDate();
+		
 		void setCheat(int input_cheat);
-		void setDate(time_t input_date);
-		void setInitials(std::string input_initials);
 		void setScore(int input_score);
 		void setWin(int input_win);
+		void setInitials(std::string input_initials);
+		void setDate(time_t input_date);
 
 		Record* nextRecordNode;
 
 	private:
+		
+		char initials[MAX_INITIALS_LENGTH]; // stored as char array rather than string for writing to file.
 		int cheat;
-		char initials[MAX_INITIALS_LENGTH];
 		int score;
 		int win;
 		time_t date;
@@ -58,14 +59,14 @@ Record::Record()
 
 }
 
-Record::Record(int input_cheat, time_t input_date,
-	std::string input_initials, int input_score, int input_win)
+Record::Record(int in_cheat, int in_score, int in_win,
+	std::string in_initials, time_t in_date)
 {
-	cheat = input_cheat;
-	date = input_date;
-	std::strcpy(initials, input_initials.c_str());
-	score = input_score;
-	win = input_win;
+	cheat = in_cheat;
+	score = in_score;
+	win = in_win;
+	std::strcpy(initials, in_initials.c_str());
+	date = in_date;
 }
 
 Record::~Record()
@@ -133,8 +134,6 @@ int cheater = 0;
 int biggest_win = 0;
 int max_credits = ONE_THOUSAND;
 
-using namespace std;
-
 // FORWARD DECLARATIONS
 void branchingMenu(char char_user_input);
 void buildDeck();
@@ -146,16 +145,17 @@ void continuePrompt();
 void dealHand();
 void discardCard(int position);
 void freePointer(Record* node);
-string getInitialsFromUser();
+std::string getInitialsFromUser();
 void highScoresAdd();
-void highScoresAddPreset(int cheat, int score, int win, string initials, time_t date);
+void highScoresAddPreset(int cheat, int score, int win, std::string initials, time_t date);
 void highScoresBuilder();
-void highScoresCreateList(int in_cheat, int in_score, int in_win, string in_initials, time_t in_date);
+void highScoresCreateList(int in_cheat, int in_score, int in_win, std::string in_initials, time_t in_date);
 void highScoresLoad();
+void highScoresPrintDate(Record* pointer);
 void highScoresSave();
 void highScoresView();
 void mainMenu();
-string orderPrizes(int tier);
+std::string orderPrizes(int tier);
 void printHand();
 void printHowToPlay();
 void printPrizes();
@@ -215,13 +215,13 @@ void branchingMenu(char char_user_input)
 			if (total_credits < MINIMUM_BET)
 			{
 				clearScreen();
-				cout << "\n You do not have enough credits to continue!\n";
+				std::cout << "\n You do not have enough credits to continue!\n";
 				purchaseCredits();
 			}
 			else if (current_bet > total_credits)
 			{
-				cout << "\n You cannot bet that much.";
-				cout << "\n Please change your current bet.\n";
+				std::cout << "\n You cannot bet that much.";
+				std::cout << "\n Please change your current bet.\n";
 			}
 			else
 			{
@@ -248,7 +248,7 @@ void branchingMenu(char char_user_input)
 			break;
 
 		default:
-			cout << "\n\n Branching invalid input. \n";
+			std::cout << "\n\n Branching invalid input. \n";
 	}
 }
 
@@ -300,26 +300,26 @@ void changeBet()
 
 	int changeBet;
 
-	cout << "\n Total Credits: " << total_credits << endl;
-	cout << "\n What would you like your bet to be? ---> ";
-	cin >> changeBet;
+	std::cout << "\n Total Credits: " << total_credits;
+	std::cout << "\n\n What would you like your bet to be? ---> ";
+	std::cin >> changeBet;
 
 	if (changeBet < MINIMUM_BET)
 	{
-		cout << "\n You must bet at least " << MINIMUM_BET << " credits.";
+		std::cout << "\n You must bet at least " << MINIMUM_BET << " credits.";
 	}
 	else if (changeBet > total_credits)
 	{
-		cout << "\n You do not have enough credits to bet " << changeBet << ".";
+		std::cout << "\n You do not have enough credits to bet " << changeBet << ".";
 	}
 	else if (changeBet > MAXIMUM_BET)
 	{
-		cout << "\n You cannot bet more than " << MAXIMUM_BET << " credits.";
+		std::cout << "\n You cannot bet more than " << MAXIMUM_BET << " credits.";
 	}
 	else
 	{
 		current_bet = changeBet;
-		cout << "\n Current bet successfully changed to " << current_bet << ".";
+		std::cout << "\n Current bet successfully changed to " << current_bet << ".";
 	}
 
 	cleanReset();
@@ -330,16 +330,16 @@ void changeCards()
 	// Swaps the user's original cards with new ones from the deck.
 
 	int discard_digit, int_user_input;
-	string truncated_user_string = "";
-	string string_user_input = "";
+	std::string truncated_user_string = "";
+	std::string string_user_input = "";
 
 	SetConsoleTextAttribute(screen, 249);
-	cout << "\n\n\n\n\n\n Enter the numbers to discard ---> ";
+	std::cout << "\n\n\n\n\n\n Enter the numbers to discard ---> ";
 	SetConsoleTextAttribute(screen, 240);
 
-	getline(cin, string_user_input);
+	getline(std::cin, string_user_input);
 	truncated_user_string = string_user_input.substr(0, 5);
-	stringstream convert(truncated_user_string);
+	std::stringstream convert(truncated_user_string);
 
 	if (convert >> int_user_input)
 	{
@@ -359,7 +359,7 @@ void changeCards()
 	}
 	else
 	{
-		cout << "\nInvalid integer, please try again.\n";
+		std::cout << "\nInvalid integer, please try again.\n";
 	}
 
 	int_user_input = 0;
@@ -383,9 +383,9 @@ void cheatCode()
 		total_credits = ONE_MILLION;
 	}
 
-	cout << "\n Secret Cheat Screen";
-	cout << "\n -------------------";
-	cout << "\n\n Total Credits set to 1,000,000!";
+	std::cout << "\n Secret Cheat Screen";
+	std::cout << "\n -------------------";
+	std::cout << "\n\n Total Credits set to 1,000,000!";
 
 	cleanReset();
 }
@@ -394,7 +394,7 @@ void cleanReset()
 {
 	// Waits for the user to enter something, then returns to the main menu.
 
-	cout << "\n\n Press enter to continue ---> ";
+	std::cout << "\n\n Press enter to continue ---> ";
 	flushBuffer();
 	clearScreen();
 	mainMenu();
@@ -406,7 +406,7 @@ void continuePrompt()
 
 	char continue_if_newline;
 
-	cout << "\n Press enter to continue ---> ";
+	std::cout << "\n Press enter to continue ---> ";
 	continue_if_newline = getchar();
 
 	clearScreen();
@@ -414,8 +414,8 @@ void continuePrompt()
 	if (continue_if_newline != '\n')
 	{
 		last_char = 'q';
-		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		mainMenu();
 	}
 }
@@ -502,16 +502,16 @@ void freePointer(Record* node)
 	}
 }
 
-string getInitialsFromUser()
+std::string getInitialsFromUser()
 {
 	// Retrieves the user's initials, converts to uppercase, and returns a string of length 3.
 
 	clearScreen();
 
-	string initials = "";
+	std::string initials = "";
 
-	cout << "\n Please enter your initials ---> ";
-	cin >> initials;
+	std::cout << "\n Please enter your initials ---> ";
+	std::cin >> initials;
 
 	initials = initials.substr(0, 3);
 	initials.resize(3, ' ');
@@ -525,7 +525,7 @@ void highScoresAdd()
 {
 	// Adds the user's current score and data to the high scores linked list.
 
-	string name = getInitialsFromUser();
+	std::string name = getInitialsFromUser();
 	time_t now = time(0);
 
 	Record *add_pointer;
@@ -541,7 +541,7 @@ void highScoresAdd()
 
 	if (add_pointer == NULL)
 	{
-		cout << "\n Out of memory! \n";
+		std::cout << "\n Out of memory! \n";
 	}
 	else
 	{
@@ -564,7 +564,7 @@ void highScoresAdd()
 	}
 }
 
-void highScoresAddPreset(int cheat, int score, int win, string initials, time_t date)
+void highScoresAddPreset(int cheat, int score, int win, std::string initials, time_t date)
 {
 	// Similar to highScoresAdd() but constructs a high score list if there
 	// is no file detected with data I manually placed into the game.
@@ -582,7 +582,7 @@ void highScoresAddPreset(int cheat, int score, int win, string initials, time_t 
 
 	if (add_pointer == NULL)
 	{
-		cout << "\n Out of memory! \n";
+		std::cout << "\n Out of memory! \n";
 	}
 	else
 	{
@@ -627,16 +627,16 @@ void highScoresBuilder()
 	highScoresAddPreset(0, 10000, 9, "BTM", 1443500000);
 }
 
-void highScoresCreateList(int in_cheat, int in_score, int in_win, string in_initials, time_t in_date)
+void highScoresCreateList(int in_cheat, int in_score, int in_win, std::string in_initials, time_t in_date)
 {
 	// Helper function which takes the data from highScoresLoad() and inserts it into a linked list.
 
 	Record *newRecordNode;
-	newRecordNode = new Record(in_cheat, in_date, in_initials, in_score, in_win);
+	newRecordNode = new Record(in_cheat, in_score, in_win, in_initials, in_date);
 
 	if (newRecordNode == NULL)
 	{
-		cout << "Out of Memory\n";
+		std::cout << "Out of Memory\n";
 	}
 	else
 	{
@@ -676,6 +676,32 @@ void highScoresCreateList(int in_cheat, int in_score, int in_win, string in_init
 	}
 }
 
+void highScoresPrintDate(Record* pointer)
+{
+	// Prints the date in a nice format for the high scores list.
+
+	time_t date_node = pointer->getDate();
+	tm convert_date = *localtime(&date_node);
+
+	if (convert_date.tm_mon < 9)
+	{
+		std::cout << " ";
+	}
+
+	std::cout << convert_date.tm_mon + 1;
+
+	if (convert_date.tm_mday < 10)
+	{
+		std::cout << "/0";
+	}
+	else
+	{
+		std::cout << "/";
+	}
+
+	std::cout << convert_date.tm_mday << "/" << convert_date.tm_year % 100;
+}
+
 void highScoresLoad()
 {
 	// Extracts the data from the high scores save file and puts it into a linked list.
@@ -683,35 +709,35 @@ void highScoresLoad()
 	int cheat = 0;
 	int score = 0;
 	int win = 0;
-	string cheat_string = "";
-	string date_string = "";
-	string score_string = "";
-	string win_string = "";
-	string initials = "";
+	std::string cheat_string = "";
+	std::string date_string = "";
+	std::string initials = "";
+	std::string score_string = "";
+	std::string win_string = "";
 	time_t date = 0;
 
-	ifstream highScoresLoad(HIGH_SCORES);
+	std::ifstream highScoresLoad(HIGH_SCORES);
 
 	if (highScoresLoad.is_open())
 	{
-		string line;
+		std::string line;
 		while (getline(highScoresLoad, line))
 		{
-			istringstream parsed(line);
+			std::istringstream parsed(line);
 
 			getline(parsed, cheat_string, ',');
-			istringstream(cheat_string) >> cheat;
+			std::istringstream(cheat_string) >> cheat;
 
 			getline(parsed, date_string, ',');
-			istringstream(date_string) >> date;
+			std::istringstream(date_string) >> date;
 
 			getline(parsed, initials, ',');
 
 			getline(parsed, score_string, ',');
-			istringstream(score_string) >> score;
+			std::istringstream(score_string) >> score;
 
 			getline(parsed, win_string, ',');
-			istringstream(win_string) >> win;
+			std::istringstream(win_string) >> win;
 
 			highScoresCreateList(cheat, score, win, initials, date);
 		}
@@ -737,51 +763,46 @@ void highScoresSave()
 	char *score_converted = new char[MAX_SCORE_LENGTH];
 	char *win_converted = new char[1];
 
-	int cheat_holder = 0;
-	int counter = 0; // Limits output file to ONE_HUNDRED lines.
-	int score_holder = 0;
-	int win_holder = 0;
+	int counter = 0;
 	std::string string_holder = "";
-	time_t date_holder = 0;
 
 	fileName = fopen(HIGH_SCORES, "wb");
 
 	if (fileName != NULL)
 	{
 		node = headRecordNode;
-		while (node != NULL && counter < ONE_HUNDRED)
-		{
-			cheat_holder = node->getCheat();
-			string_holder = std::to_string(cheat_holder);
+		while (node != NULL && counter < 15)
+		{ 
+			// Limits output file to 15 lines.
+			// This is good because it is a save file.
+
+			string_holder = std::to_string(node->getCheat());
 			std::strcpy(cheat_converted, string_holder.c_str());
-			fwrite(cheat_converted, 1, 1, fileName);
+			fwrite(cheat_converted, string_holder.length(), 1, fileName);
 
 			fwrite(",", sizeof(','), 1, fileName);
 
-			date_holder = node->getDate();
-			string_holder = std::to_string(date_holder);
+			string_holder = std::to_string(node->getDate());
 			std::strcpy(date_converted, string_holder.c_str());
-			fwrite(date_converted, 10, 1, fileName);
+			fwrite(date_converted, string_holder.length(), 1, fileName);
 
 			fwrite(",", sizeof(','), 1, fileName);
 
 			string_holder = node->getInitials();
 			std::strcpy(initials_converted, string_holder.c_str());
-			fwrite(initials_converted, MAX_INITIALS_LENGTH, 1, fileName);
+			fwrite(initials_converted, string_holder.length(), 1, fileName);
 
 			fwrite(",", sizeof(','), 1, fileName);
 
-			score_holder = node->getScore();
-			string_holder = std::to_string(score_holder);
+			string_holder = std::to_string(node->getScore());
 			std::strcpy(score_converted, string_holder.c_str());
-			fwrite(score_converted, MAX_SCORE_LENGTH, 1, fileName);
+			fwrite(score_converted, string_holder.length(), 1, fileName);
 
 			fwrite(",", sizeof(','), 1, fileName);
 
-			win_holder = node->getWin();
-			string_holder = std::to_string(win_holder);
+			string_holder = std::to_string(node->getWin());
 			std::strcpy(win_converted, string_holder.c_str());
-			fwrite(win_converted, 1, 1, fileName);
+			fwrite(win_converted, string_holder.length(), 1, fileName);
 
 			node = node->nextRecordNode;
 			fwrite("\n", sizeof('\n'), 1, fileName);
@@ -790,7 +811,7 @@ void highScoresSave()
 	}
 	else
 	{
-		cout << "\n ERROR: Could not open file for saving data ! \n";
+		std::cout << "\n ERROR: Could not open file for saving data ! \n";
 	}
 }
 
@@ -798,18 +819,19 @@ void highScoresView()
 {
 	// Displays a list of the high scores for the user.
 
-	int counter = 1;
 	Record *view_pointer = headRecordNode;
-	
+
 	if (view_pointer == NULL)
 	{
-		cout << "\n No Records Found.";
+		std::cout << "\n No Records Found.";
 	}
 	else
 	{
-		cout << "\n                               High Scores!!!!";
-		cout << "\n ---------------------------------------------------------------------------";
-		cout << "\n\n Initials | Maximum Score | Best Hand Earned |  Date Won  |  Secret Column\n";
+		int counter = 1;
+
+		std::cout << "\n                              High Scores!!!";
+		std::cout << "\n ------------------------------------------------------------------------";
+		std::cout << "\n\n  Initials | High Score | Best Hand Earned | Date Won | Secret Column!!!\n";
 
 		while (view_pointer && counter < 16)
 		{
@@ -832,38 +854,26 @@ void highScoresView()
 
 			if (counter < 10)
 			{
-				cout << "\n  " << counter << ") ";
+				std::cout << "\n    " << counter << ") ";
 			}
 			else
 			{
-				cout << "\n " << counter << ") ";
+				std::cout << "\n   " << counter << ") ";
 			}
 
-			cout << view_pointer->getInitials() << "  | ";
-			cout << std::setw(MAX_SCORE_LENGTH) << view_pointer->getScore() << " | ";
-			cout << std::setw(MAX_WIN_LENGTH) << orderPrizes(view_pointer->getWin()) << " | ";
+			std::cout << view_pointer->getInitials() << " | ";
+			std::cout << std::setw(MAX_SCORE_LENGTH) << view_pointer->getScore() << " | ";
+			std::cout << std::setw(MAX_WIN_LENGTH) << orderPrizes(view_pointer->getWin()) << " | ";
 			
-			time_t date_node = view_pointer->getDate();
-			tm convert_date = *localtime(&date_node);
-
-			if (convert_date.tm_mon < 9 && convert_date.tm_mday < 10)
-			{
-				cout << "  ";
-			}
-			else if (convert_date.tm_mon < 9 || convert_date.tm_mday < 10)
-			{
-				cout << " ";
-			}
-
-			cout << convert_date.tm_mon + 1 << "/" << convert_date.tm_mday << "/" << convert_date.tm_year + 1900;
+			highScoresPrintDate(view_pointer);
 
 			if (view_pointer->getCheat() == 1)
 			{
-				cout << " | Cheats enabled! ";
+				std::cout << " | Cheats enabled!! ";
 			}
 			else
 			{
-				cout << " |                 ";
+				std::cout << " |                  ";
 			}
 			
 			view_pointer = view_pointer->nextRecordNode;
@@ -882,30 +892,30 @@ void mainMenu()
 	// typing a character.
 
 	char char_user_input = ' ';
-	string string_user_input = "";
+	std::string string_user_input = "";
 	last_char = ' ';
 
-	cout << "\n Welcome to Brian's Five Card Draw!!!";
-	cout << "\n\n -------------\t\tTotal Credits: " << total_credits;
-	cout << "\n   Main Menu";
-	cout << "\n -------------\t\t  Current Bet: " << current_bet << endl;
-	cout << "\n P) Play 5 Card Draw";
-	cout << "\n B) Buy More Credits";
-	cout << "\n C) Change Current Bet";
-	cout << "\n L) List the Prizes";
-	cout << "\n H) How to Play";
-	cout << "\n S) Show the Rules";
-	cout << "\n V) View the High Scores";
-	cout << "\n Q) Quit";
-	cout << "\n\n Please enter a choice ---> ";
+	std::cout << "\n Welcome to Brian's Five Card Draw!!!";
+	std::cout << "\n\n -------------\t\tTotal Credits: " << total_credits;
+	std::cout << "\n   Main Menu";
+	std::cout << "\n -------------\t\t  Current Bet: " << current_bet;
+	std::cout << "\n\n P) Play 5 Card Draw";
+	std::cout << "\n B) Buy More Credits";
+	std::cout << "\n C) Change Current Bet";
+	std::cout << "\n H) How to Play";
+	std::cout << "\n L) List the Prizes";
+	std::cout << "\n S) Show the Rules";
+	std::cout << "\n V) View the High Scores";
+	std::cout << "\n Q) Quit";
+	std::cout << "\n\n Please enter a choice ---> ";
 
-	cin >> string_user_input;
+	std::cin >> string_user_input;
 	char_user_input = string_user_input.at(0);
 	char_user_input = tolower(char_user_input);
 	last_char = char_user_input;
 
-	cin.clear();
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	std::cin.clear();
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	clearScreen();
 	
 	if (string_user_input == "Cheato")
@@ -924,12 +934,12 @@ void mainMenu()
 
 	}
 	else {
-		cout << "\n Please enter a letter corresponding to a menu option.\n";
+		std::cout << "\n Please enter a letter corresponding to a menu option.\n";
 		mainMenu();
 	}
 }
 
-string orderPrizes(int tier)
+std::string orderPrizes(int tier)
 {
 	switch (tier)
 	{
@@ -977,17 +987,17 @@ void printHand()
 	{
 		SetConsoleTextAttribute(screen, 249);
 
-		cout << "\n ------------\t\tTotal Credits: " << total_credits;
-		cout << "\n   New Hand";
-		cout << "\n ------------\t\t  Current Bet: " << current_bet << endl;
+		std::cout << "\n ------------\t\tTotal Credits: " << total_credits;
+		std::cout << "\n   New Hand";
+		std::cout << "\n ------------\t\t  Current Bet: " << current_bet << "\n";
 
 		SetConsoleTextAttribute(screen, 240);
 	}
 	else
 	{
-		cout << "\n --------------------\tTotal Credits: " << total_credits;
-		cout << "\n   After Discarding";
-		cout << "\n --------------------\t  Current Bet: " << current_bet << endl;
+		std::cout << "\n --------------------\tTotal Credits: " << total_credits;
+		std::cout << "\n   After Discarding";
+		std::cout << "\n --------------------\t  Current Bet: " << current_bet << "\n";
 	}
 
 	initial = !initial;
@@ -1000,19 +1010,19 @@ void printHand()
 		}
 
 		if (PlayerHand[print_index].card_value == 10)
-			cout << "\n " << print_index + 1 << ")  10 " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << endl;
+			std::cout << "\n " << print_index + 1 << ")  10 " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << "\n";
 		else if (PlayerHand[print_index].card_value == 11)
-			cout << "\n " << print_index + 1 << ")  J  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << endl;
+			std::cout << "\n " << print_index + 1 << ")  J  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << "\n";
 		else if (PlayerHand[print_index].card_value == 12)
-			cout << "\n " << print_index + 1 << ")  Q  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << endl;
+			std::cout << "\n " << print_index + 1 << ")  Q  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << "\n";
 		else if (PlayerHand[print_index].card_value == 13)
-			cout << "\n " << print_index + 1 << ")  K  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << endl;
+			std::cout << "\n " << print_index + 1 << ")  K  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << "\n";
 		else if (PlayerHand[print_index].card_value == 14)
-			cout << "\n " << print_index + 1 << ")  A  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << endl;
+			std::cout << "\n " << print_index + 1 << ")  A  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << "\n";
 		else
-			cout << "\n " << print_index + 1 << ")  " << PlayerHand[print_index].card_value << "  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << endl;
+			std::cout << "\n " << print_index + 1 << ")  " << PlayerHand[print_index].card_value << "  " << suit_symbols[PlayerHand[print_index].suit_letter] << " " << suit_names[PlayerHand[print_index].suit_letter] << "\n";
 		if (print_index == 4)
-			cout << "\n";
+			std::cout << "\n";
 
 		SetConsoleTextAttribute(screen, 240);
 	}
@@ -1022,15 +1032,15 @@ void printHowToPlay()
 {
 	// Displays the guide to the user.
 
-	cout << "\n How to Play";
-	cout << "\n -----------";
-	cout << "\n\n After selecting play from the menu you will be dealt five cards.";
-	cout << "\n Enter the numbers that correspond with the cards in your hand";
-	cout << "\n that you would like to draw, and you will be dealt new cards based";
-	cout << "\n on what you entered. If you have a winning hand, you will earn credits.";
-	cout << "\n If you lose, your bet will be subtracted from your total credits.";
-	cout << "\n After each hand is played, you will be returned to the main menu.";
-	cout << "\n\n Good luck and have fun!!!";
+	std::cout << "\n How to Play";
+	std::cout << "\n -----------";
+	std::cout << "\n\n After selecting play from the menu you will be dealt five cards.";
+	std::cout << "\n Enter the numbers that correspond with the cards in your hand";
+	std::cout << "\n that you would like to draw, and you will be dealt new cards based";
+	std::cout << "\n on what you entered. If you have a winning hand, you will earn credits.";
+	std::cout << "\n If you lose, your bet will be subtracted from your total credits.";
+	std::cout << "\n After each hand is played, you will be returned to the main menu.";
+	std::cout << "\n\n Good luck and have fun!!!";
 	cleanReset();
 }
 
@@ -1038,18 +1048,18 @@ void printPrizes()
 {
 	// Displays the prize tiers for the user.
 
-	cout << "\n Prize Pool";
-	cout << "\n ----------";
-	cout << "\n\n Winning name: Multiple of amount bet\n";
-	cout << "\n Royal flush:\t  5000";
-	cout << "\n Straight flush:  500";
-	cout << "\n Four of a kind:  150";
-	cout << "\n Full house:\t  75";
-	cout << "\n Flush:\t\t  50";
-	cout << "\n Straight:\t  20";
-	cout << "\n Three of a kind: 5";
-	cout << "\n Two pair:\t  2";
-	cout << "\n Jacks or better: 1";
+	std::cout << "\n Prize Pool";
+	std::cout << "\n ----------";
+	std::cout << "\n\n Winning name: Multiple of amount bet\n";
+	std::cout << "\n Royal flush:\t  5000";
+	std::cout << "\n Straight flush:  500";
+	std::cout << "\n Four of a kind:  150";
+	std::cout << "\n Full house:\t  75";
+	std::cout << "\n Flush:\t\t  50";
+	std::cout << "\n Straight:\t  20";
+	std::cout << "\n Three of a kind: 5";
+	std::cout << "\n Two pair:\t  2";
+	std::cout << "\n Jacks or better: 1";
 	cleanReset();
 }
 
@@ -1057,12 +1067,12 @@ void printRules()
 {
 	// Displays the rules set to the user.
 
-	cout << "\n Rules";
-	cout << "\n -----";
-	cout << "\n\n The minimum bet is " << MINIMUM_BET << " credits.";
-	cout << "\n The maximum bet is " << MAXIMUM_BET << " credits.";
-	cout << "\n\n If your credit balance falls below the minimum bet, ";
-	cout << "\n you must add more to continue playing.";
+	std::cout << "\n Rules";
+	std::cout << "\n -----";
+	std::cout << "\n\n The minimum bet is " << MINIMUM_BET << " credits.";
+	std::cout << "\n The maximum bet is " << MAXIMUM_BET << " credits.";
+	std::cout << "\n\n If your credit balance falls below the minimum bet, ";
+	std::cout << "\n you must add more to continue playing.";
 	cleanReset();
 }
 
@@ -1074,38 +1084,38 @@ void purchaseCredits()
 
 	if (total_credits >= 1000)
 	{
-		cout << "\n You may only add to your balance if you are below " << ONE_THOUSAND << " credits.";
+		std::cout << "\n You may only add to your balance if you are below " << ONE_THOUSAND << " credits.";
 	}
 	else
 	{
-		cout << "\n You may currently add up to " << ONE_THOUSAND - total_credits << " credits.";
-		cout << "\n\n How many credits would you like to buy? ---> ";
-		cin >> add_credits;
+		std::cout << "\n You may currently add up to " << ONE_THOUSAND - total_credits << " credits.";
+		std::cout << "\n\n How many credits would you like to buy? ---> ";
+		std::cin >> add_credits;
 
-		if (cin.fail())
+		if (std::cin.fail())
 		{
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "\n User input not an integer.";
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cout << "\n User input not an integer.";
 		}
 		else
 		{
 			if (add_credits < 1)
 			{
-				cout << "\n You may only add a positive credit amount.";
+				std::cout << "\n You may only add a positive credit amount.";
 			}
 			else if (add_credits < (MINIMUM_BET - total_credits))
 			{
-				cout << "\n You must buy enough credits to play at least once!";
+				std::cout << "\n You must buy enough credits to play at least once!";
 			}
 			else if (add_credits > (ONE_THOUSAND - total_credits))
 			{
-				cout << "\n You may only buy up to " << ONE_THOUSAND << " credits.";
+				std::cout << "\n You may only buy up to " << ONE_THOUSAND << " credits.";
 			}
 			else
 			{
 				total_credits += add_credits;
-				cout << "\n Total credits is now " << total_credits << ".";
+				std::cout << "\n Total credits is now " << total_credits << ".";
 			}
 		}
 	}
@@ -1158,8 +1168,8 @@ void sortHand()
 				smallest_index = current_index;
 		}
 
-		swap(PlayerHand[start_index].card_value, PlayerHand[smallest_index].card_value);
-		swap(PlayerHand[start_index].suit_letter, PlayerHand[smallest_index].suit_letter);
+		std::swap(PlayerHand[start_index].card_value, PlayerHand[smallest_index].card_value);
+		std::swap(PlayerHand[start_index].suit_letter, PlayerHand[smallest_index].suit_letter);
 	}
 }
 
@@ -1178,9 +1188,9 @@ void winningConditions()
 		(PlayerHand[2].suit_letter == PlayerHand[3].suit_letter) &&
 		(PlayerHand[3].suit_letter == PlayerHand[4].suit_letter))
 	{
-		cout << "\n CONGRATULATIONS ROYAL FLUSH!!";
-		cout << "\n ---You win 5000x your bet!---";
-		cout << "\n\n Won this hand: " << 5000 * current_bet <<endl;
+		std::cout << "\n CONGRATULATIONS ROYAL FLUSH!!";
+		std::cout << "\n ---You win 5000x your bet!---";
+		std::cout << "\n\n Won this hand: " << 5000 * current_bet <<"\n";
 		total_credits += (5000 * current_bet);
 
 		if (biggest_win < 9)
@@ -1206,9 +1216,9 @@ void winningConditions()
 			(PlayerHand[2].suit_letter == PlayerHand[3].suit_letter) &&
 			(PlayerHand[3].suit_letter == PlayerHand[4].suit_letter))))
 	{
-		cout << "\n CONGRATULATIONS STRAIGHT FLUSH!";
-		cout << "\n ----You win 500x your bet!----";
-		cout << "\n\n Won this hand: " << 500 * current_bet << endl;
+		std::cout << "\n CONGRATULATIONS STRAIGHT FLUSH!";
+		std::cout << "\n ----You win 500x your bet!----";
+		std::cout << "\n\n Won this hand: " << 500 * current_bet << "\n";
 		total_credits += (500 * current_bet);
 
 		if (biggest_win < 8)
@@ -1223,9 +1233,9 @@ void winningConditions()
 			PlayerHand[2].card_value == PlayerHand[3].card_value &&
 			PlayerHand[3].card_value == PlayerHand[4].card_value))
 	{
-		cout << "\n CONGRATULATIONS FOUR OF A KIND!";
-		cout << "\n ----You win 150x your bet!!----";
-		cout << "\n\n Won this hand: " << 150 * current_bet << endl;
+		std::cout << "\n CONGRATULATIONS FOUR OF A KIND!";
+		std::cout << "\n ----You win 150x your bet!!----";
+		std::cout << "\n\n Won this hand: " << 150 * current_bet << "\n";
 		total_credits += (150 * current_bet);
 
 		if (biggest_win < 7)
@@ -1240,9 +1250,9 @@ void winningConditions()
 			PlayerHand[1].card_value == PlayerHand[2].card_value &&
 			PlayerHand[3].card_value == PlayerHand[4].card_value))
 	{
-		cout << "\n CONGRATULATIONS FULL HOUSE!";
-		cout << "\n ---You win 75x your bet!---";
-		cout << "\n\n Won this hand: " << 75 * current_bet << endl;
+		std::cout << "\n CONGRATULATIONS FULL HOUSE!";
+		std::cout << "\n ---You win 75x your bet!---";
+		std::cout << "\n\n Won this hand: " << 75 * current_bet << "\n";
 		total_credits += (75 * current_bet);
 
 		if (biggest_win < 6)
@@ -1255,9 +1265,9 @@ void winningConditions()
 		(PlayerHand[2].suit_letter == PlayerHand[3].suit_letter) &&
 		(PlayerHand[3].suit_letter == PlayerHand[4].suit_letter))
 	{
-		cout << "\n CONGRATULATIONS FLUSH!!";
-		cout << "\n -You win 50x your bet!-";
-		cout << "\n\n Won this hand: " << 50 * current_bet << endl;
+		std::cout << "\n CONGRATULATIONS FLUSH!!";
+		std::cout << "\n -You win 50x your bet!-";
+		std::cout << "\n\n Won this hand: " << 50 * current_bet << "\n";
 		total_credits += (50 * current_bet);
 		
 		if (biggest_win < 5)
@@ -1275,9 +1285,9 @@ void winningConditions()
 			(PlayerHand[2].card_value == (PlayerHand[3].card_value - 1)) &&
 			(PlayerHand[3].card_value == (PlayerHand[4].card_value - 1))))
 	{
-		cout << "\n CONGRATULATIONS STRAIGHT!";
-		cout << "\n --You win 20x your bet!--";
-		cout << "\n\n Won this hand: " << 20 * current_bet << endl;
+		std::cout << "\n CONGRATULATIONS STRAIGHT!";
+		std::cout << "\n --You win 20x your bet!--";
+		std::cout << "\n\n Won this hand: " << 20 * current_bet << "\n";
 		total_credits += (20 * current_bet);
 
 		if (biggest_win < 4)
@@ -1289,9 +1299,9 @@ void winningConditions()
 		(PlayerHand[1].card_value == PlayerHand[2].card_value && PlayerHand[2].card_value == PlayerHand[3].card_value) ||
 		(PlayerHand[2].card_value == PlayerHand[3].card_value && PlayerHand[3].card_value == PlayerHand[4].card_value))
 	{
-		cout << "\n CONGRATULATIONS THREE OF A KIND!";
-		cout << "\n ------You win 5x your bet!------";
-		cout << "\n\n Won this hand: " << 5 * current_bet << endl;
+		std::cout << "\n CONGRATULATIONS THREE OF A KIND!";
+		std::cout << "\n ------You win 5x your bet!------";
+		std::cout << "\n\n Won this hand: " << 5 * current_bet << "\n";
 		total_credits += (5 * current_bet);
 
 		if (biggest_win < 3)
@@ -1303,9 +1313,9 @@ void winningConditions()
 		(PlayerHand[0].card_value == PlayerHand[1].card_value && PlayerHand[3].card_value == PlayerHand[4].card_value) ||
 		(PlayerHand[1].card_value == PlayerHand[2].card_value && PlayerHand[3].card_value == PlayerHand[4].card_value))
 	{
-		cout << "\n CONGRATULATIONS TWO PAIR";
-		cout << "\n --You win 2x your bet!--";
-		cout << "\n\n Won this hand: " << 2 * current_bet << endl;
+		std::cout << "\n CONGRATULATIONS TWO PAIR";
+		std::cout << "\n --You win 2x your bet!--";
+		std::cout << "\n\n Won this hand: " << 2 * current_bet << "\n";
 		total_credits += (2 * current_bet);
 
 		if (biggest_win < 2)
@@ -1318,9 +1328,9 @@ void winningConditions()
 		(PlayerHand[2].card_value == PlayerHand[3].card_value && PlayerHand[2].card_value > 10) ||
 		(PlayerHand[3].card_value == PlayerHand[4].card_value && PlayerHand[3].card_value > 10))
 	{
-		cout << "\n CONGRATULATIONS JACKS OR BETTER!";
-		cout << "\n ------You win 1x your bet!------";
-		cout << "\n\n Won this hand: " << current_bet << endl;
+		std::cout << "\n CONGRATULATIONS JACKS OR BETTER!";
+		std::cout << "\n ------You win 1x your bet!------";
+		std::cout << "\n\n Won this hand: " << current_bet << "\n";
 		total_credits += current_bet;
 
 		if (biggest_win < 1)
@@ -1330,7 +1340,7 @@ void winningConditions()
 	}
 	else
 	{
-		cout << "\n\n\n\n\n";
+		std::cout << "\n\n\n\n\n";
 	}
 
 	if (total_credits > max_credits)
