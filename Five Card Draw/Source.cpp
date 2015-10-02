@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
 AUTHOR:			Brian Mascitello
-DATE:			9/30/2015
+DATE:			10/2/2015
 EXERCISE:		C++ Practice
 SPECIFICATION:	This program simulates a poker variant known
 	as "Five Card Draw".
@@ -150,6 +150,8 @@ void highScoresAdd();
 void highScoresAddPreset(int cheat, int score, int win, std::string initials, time_t date);
 void highScoresBuilder();
 void highScoresCreateList(int in_cheat, int in_score, int in_win, std::string in_initials, time_t in_date);
+void highScoresDecrypt();
+void highScoresEncrypt();
 void highScoresLoad();
 void highScoresPrintDate(Record* pointer);
 void highScoresSave();
@@ -171,6 +173,8 @@ void main()
 	// This function will create the deck of cards, set the console backround to white,
 	// and display the main menu, which the user will directly interact with.
 
+	highScoresDecrypt(); // Decrypts the save file.
+
 	highScoresLoad(); // Loads a linked list of high scores.
 
 	buildDeck(); // Constructs a standard deck of 52 cards.
@@ -182,6 +186,8 @@ void main()
 	highScoresAdd(); // After quitting the game, prompts the user for initials to add their score.
 
 	highScoresSave(); // Saves their score to the linked list file.
+
+	highScoresEncrypt(); // Encrypts the save file.
 
 	freePointer(headRecordNode); // Frees the linked list from memory space.
 }
@@ -676,6 +682,87 @@ void highScoresCreateList(int in_cheat, int in_score, int in_win, std::string in
 	}
 }
 
+void highScoresDecrypt()
+{
+	std::string decryptedtext;
+	std::string iv = "onelsthakyirgvcx";
+	std::string key = "0123456789abcdef";
+	std::string plaintext;
+
+	std::ifstream inFile;
+	inFile.open(HIGH_SCORES); // open the input file
+
+	if (inFile.is_open()) {
+		std::stringstream strStream;
+		strStream << inFile.rdbuf(); // read the file
+		plaintext = strStream.str(); // plaintext holds the content of the file
+
+		inFile.close();
+
+		CryptoPP::AES::Decryption aesDecryption((byte *)key.c_str(), CryptoPP::AES::DEFAULT_KEYLENGTH);
+		CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, (byte *)iv.c_str());
+
+		CryptoPP::StreamTransformationFilter stfDecryptor(cbcDecryption, new CryptoPP::StringSink(decryptedtext));
+		stfDecryptor.Put(reinterpret_cast<const unsigned char*>(plaintext.c_str()), plaintext.size());
+		stfDecryptor.MessageEnd();
+
+		FILE *fileName;
+
+		fileName = fopen(HIGH_SCORES, "wb");
+
+		if (fileName != NULL)
+		{
+			fwrite(decryptedtext.c_str(), decryptedtext.length(), 1, fileName);
+			fclose(fileName);
+		}
+		else
+		{
+			std::cout << "\n ERROR: Could not open file for saving data ! \n";
+		}
+	}
+}
+
+void highScoresEncrypt()
+{
+	std::string ciphertext;
+	std::string iv = "onelsthakyirgvcx";
+	std::string key = "0123456789abcdef";
+	std::string plaintext;
+
+	std::ifstream inFile;
+	inFile.open(HIGH_SCORES); // open the input file
+
+	std::stringstream strStream;
+	strStream << inFile.rdbuf(); // read the file
+	plaintext = strStream.str(); // plaintext holds the content of the file
+
+	inFile.close();
+
+	CryptoPP::AES::Encryption aesEncryption((byte *)key.c_str(), CryptoPP::AES::DEFAULT_KEYLENGTH);
+	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, (byte *)iv.c_str());
+
+	CryptoPP::StreamTransformationFilter stfEncryptor(cbcEncryption, new CryptoPP::StringSink(ciphertext));
+	stfEncryptor.Put(reinterpret_cast<const unsigned char*>(plaintext.c_str()), plaintext.length() + 1);
+	stfEncryptor.MessageEnd();
+	
+
+	inFile.close();
+
+	FILE *fileName;
+
+	fileName = fopen(HIGH_SCORES, "wb");
+
+	if (fileName != NULL)
+	{
+		fwrite(ciphertext.c_str(), ciphertext.length(), 1, fileName);
+		fclose(fileName);
+	}
+	else
+	{
+		std::cout << "\n ERROR: Could not open file for saving data ! \n";
+	}
+}
+
 void highScoresPrintDate(Record* pointer)
 {
 	// Prints the date in a nice format for the high scores list.
@@ -808,6 +895,8 @@ void highScoresSave()
 			fwrite("\n", sizeof('\n'), 1, fileName);
 			counter++;
 		}
+
+		fclose(fileName);
 	}
 	else
 	{

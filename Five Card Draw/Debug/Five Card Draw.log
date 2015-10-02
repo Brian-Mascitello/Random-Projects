@@ -1,13 +1,15 @@
-﻿Build started 9/30/2015 8:21:10 PM.
+﻿Build started 10/2/2015 5:23:24 AM.
      1>Project "C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Five Card Draw.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
          Source.cpp
+     1>c:\users\brian\documents\visual studio 2015\projects\five card draw\cryptopp\algparam.h(277): warning C4297: 'CryptoPP::AlgorithmParametersBase::~AlgorithmParametersBase': function assumed not to throw an exception but does
+         c:\users\brian\documents\visual studio 2015\projects\five card draw\cryptopp\algparam.h(277): note: destructor or deallocator has a (possibly implicit) non-throwing exception specification
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Debug\Five Card Draw.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Debug\Five Card Draw.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Debug\Five Card Draw.lib" /MACHINE:X86 Debug\Source.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Debug\Five Card Draw.exe" /INCREMENTAL /NOLOGO "C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\CryptoPP\Win32\Output\Debug\cryptlib.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Debug\Five Card Draw.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Debug\Five Card Draw.lib" /MACHINE:X86 Debug\Source.obj
          Five Card Draw.vcxproj -> C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Debug\Five Card Draw.exe
      1>Done Building Project "C:\Users\Brian\Documents\Visual Studio 2015\Projects\Five Card Draw\Five Card Draw.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.32
+Time Elapsed 00:00:01.80
