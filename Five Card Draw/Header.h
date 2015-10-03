@@ -17,14 +17,6 @@
 #include <stdio.h>
 #include <windows.h>
 
-// INCLUDES FOR CRYPTOGRAPHY
-#include "..\Five Card Draw\CryptoPP\osrng.h"
-using CryptoPP::AutoSeededRandomPool;
-#include "..\Five Card Draw\CryptoPP\modes.h"
-using CryptoPP::CBC_Mode;
-#include "..\Five Card Draw\CryptoPP\filters.h"
-using CryptoPP::StreamTransformationFilter;
-
 // MACROS
 #define DECK_SIZE 52
 #define HAND_SIZE 5
