@@ -8,6 +8,8 @@ def newtoncube(a, b, c, d, x0):
     epsilon = 2.2204*10**-16
     """ governs precision of convergence
         where 2.2204*10**-16 = machine epsilion in python """
+        
+    print "f(x) = %dx^3 + %dx^2 + %dx + %d" % (a, b, c, d)
 
     x = x0
     xprevious = 0
@@ -20,5 +22,10 @@ def newtoncube(a, b, c, d, x0):
         change = abs(float(x - xprevious))
         residual = a*x**3 + b*x**2 + c*x + d
         print "Iteration: %d, Root: %f, Change: %f, Residual: %f" % (k,x,change,residual)
+    
+    print "Root at",x,"\n"
 
     return float(x)
+
+newtoncube(3, -2, 7, -1, 10)
+newtoncube(1, -5, 0, -3, 10)
