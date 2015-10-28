@@ -27,5 +27,14 @@ def newtoncube(a, b, c, d, x0):
 
     return float(x)
 
-newtoncube(3, -2, 7, -1, 10)
-newtoncube(1, -5, 0, -3, 10)
+print("f(x) = ax^3 + bx^2 + cx + d")
+print("Machine epsilon set as: 2.2204*10^-16")
+a = float(input("Please enter the value of a: "))
+b = float(input("Please enter the value of b: "))
+c = float(input("Please enter the value of c: "))
+d = float(input("Please enter the value of d: "))
+x0 = float(input("Please enter your guess of the root: "))
+newtoncube(a, b, c, d, x0)
+
+# newtoncube(3, -2, 7, -1, 10) # saved test value
+# newtoncube(1, -5, 0, -3, 10) # saved test value
