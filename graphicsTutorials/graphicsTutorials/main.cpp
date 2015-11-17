@@ -12,12 +12,14 @@ int main(int argc, char** argv) {
 	MainGame mainGame;
 	mainGame.run();
 
+	return 0; // this is necessary since int main
+
+	/*
 	std::cout << "Enter any key to quit...";
 	int a;
 	std::cin >> a;
 	return 0;
-
-	/*
+	
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	return 0;
