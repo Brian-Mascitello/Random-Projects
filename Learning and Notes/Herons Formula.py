@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Author: Brian Mascitello
-Date:   12/12/2015
+Date:   12/13/2015
 School: Arizona State University
-Info:   First test program using Spyder (Python 3.5) that is part of the
-    Anaconda download. 
-
-Anaconda = <https://www.continuum.io/downloads>
-
-Numpy Reference = <http://docs.scipy.org/doc/numpy-1.10.0/reference/index.html>
+Info:   Made one of my favorite math functions into a program.
 """
 
 from math import sqrt
