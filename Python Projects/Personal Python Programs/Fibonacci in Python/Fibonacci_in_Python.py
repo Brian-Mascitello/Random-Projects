@@ -80,7 +80,7 @@ def fibonacci_soda_special(n):
                 fib_stored_values_two[n] = fibonacci_even_odd_recursive((n - 1) / 2) ** 2 + fibonacci_even_odd_recursive((n + 1) / 2) ** 2
         return fib_stored_values_two[n]
 
-text_file = open("Fibonacci Results", "w")
+text_file = open("Fibonacci Results.txt", "w")
 
 n = 30
 text_file.write("Even Odd Recursive Fibonacci\n")

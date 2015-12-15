@@ -80,7 +80,7 @@ def kaprekars_constant(k):
 
 ###############################################################################
 
-text_file = open("Kaprekar Results", "w")
+text_file = open("Kaprekar Results.txt", "w")
 
 text_file.write("Kaprekar's Calculations from 1000 to 9999\n")
 
