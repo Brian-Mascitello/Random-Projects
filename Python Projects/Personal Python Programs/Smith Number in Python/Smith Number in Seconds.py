@@ -3,11 +3,8 @@
 Author: Brian Mascitello
 Date:   12/15/2015
 School: Arizona State University
-Info:   This program will takes an integer as input, calculates the digit sum
-    of the given number, determine the number's prime factorization, calculates
-    the digit sum of the number's prime factorization, compare the two sums to 
-    each other and determine if they are equivalent, and finally print the
-    results to the screen.
+Info:   This program is similar to "Smith Number.py" except it will run for a
+    certain amount of seconds and store the answers in a text file.
 Inspiration:	The YouTube video title = "4937775 - Numberphile" is linked below.
     http://www.youtube.com/watch?v=mlqAvhjxAjo
     A Smith Number is when both the digits of the original integer added
@@ -31,6 +28,8 @@ Learned:
 """
 
 import math # Necessary for the floor function.
+import sys # Used for sys.maxsize 9223372036854775807
+import time # Made a timer for each 10 calculations and timed stop.
 
 def digit_sum(d):
     # Returns the digit sum of the input d.
@@ -57,7 +56,7 @@ def prime_factorization(p):
     index = 1 # Sets to 1 since 0 is divide by zero error.
  
     for index in range (2, int(p / index)):
-        # Goes from 2 (the first prime number) to p/index since you can not 
+        # Goes from 2 (the first prime number) to p/index since you cannot 
         # evenly divide a number greater than half of it other than by itself.
         # (say p = 211, since 211 is prime, there will not be a divisor found,
         # and this will check 2, 3, 4, ..., 103, 104, 105)
@@ -109,7 +108,7 @@ def smith_number(s):
     if constant < 4:
         # Catches all cases less than 4 since 4 is the first Smith Number.
     
-        return 'All integers less than four cannot be a Smith Number.'
+        return 'All integers less than four can not be a Smith Number.'
         
     else:
         # Entered when a possible Smith Number is found.
@@ -120,17 +119,45 @@ def smith_number(s):
         (factorization, summation) = smith_pair
         
         if digit_sum(constant) == summation:
-            # If True constant is a Smith Number and returns a joyous string.
-        
-            return 'Yes! ' + str(constant) + ' is a Smith Number!!!!!'
+            return True
             
-        return 'No!  ' + str(constant) + ' is NOT a Smith Number.'
+        return False
 
 ###############################################################################
 
-print(smith_number(4))
-print(smith_number(7))
-print(smith_number(8))
-print(smith_number(11))
-print(smith_number(22))
-print(smith_number(4937774))
+start = time.time() # Records the start time of the program.
+
+text_file = open("Smith Number Results.txt", "w") # Opens a file for writing.
+
+text_file.write("64-bit Smith Numbers \n\n") # Adds a header for the file.
+
+counter = 0 # Will be used for changing lines after writing 10 numbers.
+
+text_file.write("0 s:\t") # Starts the timer column, has issue with end time.
+
+for x in range (4, sys.maxsize): # (4 to max integer 9223372036854775807)
+    
+    if smith_number(x) == True:
+        # Will add only Smith Numbers to the list.
+    
+        counter = counter + 1
+        text_file.write(str(x) + ', ')
+        
+        if counter == 10:
+            # Every tenth number changes to the next line, makes the output
+            # easier to read and allows me to see time it took for each line to
+            # process.
+            
+            counter = 0 # Resets for new line.
+            text_file.write('\n')
+            end = time.time()
+            stop_time = math.floor(end - start) # Time in seconds start to end.
+            
+            if stop_time > 4:
+                # Specifically used for exiting function based off run time.
+            
+                break
+            
+            text_file.write(str(stop_time) + " s:\t")
+    
+text_file.close()
