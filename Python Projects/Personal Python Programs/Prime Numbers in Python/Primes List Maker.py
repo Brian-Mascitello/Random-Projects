@@ -34,13 +34,9 @@ def prime_finder(termination_number):
                     # x is divisible by a prime thus x itself is not prime.
                     break
                 
-                if x / primes[y] < primes[int(len(primes) ** (1.0 / 2.2)) - 1]:
-                    # Accurate up to at least 2 million, started with iterating
-                    # through all primes[], knowing that was slow but reliable.
-                    # Noticed if a prime/n < 2, then no reason to compute
-                    # higher iterations since 2 is smallest prime. Then
-                    # realized there would be a function and through trial and
-                    # error got up to the function above.
+                if x < primes[y] ** 2:
+                    # Since this checks smallest divsors first, if a primes[y]
+                    # is greater than sqrt(x), no need to check further.
                     # As right side increases, less iterations of loop, more
                     # time saved though less primes checked.
                 
@@ -54,7 +50,7 @@ def prime_finder(termination_number):
 
 start = time.time()
 
-# 1,000,000 takes ~ 12 seconds on my computer.
+# 1000000 takes ~ 6.5 seconds on my computer.
 prime_finder(1000000) # Will find prime numbers up to 1000000.
 
 end = time.time()
