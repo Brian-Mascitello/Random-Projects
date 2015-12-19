@@ -62,5 +62,3 @@ with open('Day2Q1 Input.txt') as current:
         
 # print(dimensions_array) # Used to test array, final one should be [5, 11, 23]
 print(total_paper_needed) # Total square feet of wrapping paper needed.
-        
-        
