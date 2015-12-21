@@ -52,45 +52,58 @@ for i in range(0, len(input_string)):
     elif input_string[i] == '<':
         west += 1
         
-print(north, east, south, west) # Checks final values of the directions.
+# print(north, east, south, west) # Checks final values of the directions.
 
-# horizontal_length and vertical_length for the size of 2D array Santa will traverse.
+# horizon_len and vert_len for the size of 2D array Santa will traverse.
 # The midpoints will be the starting location in the center of the 2D array
 if north > south:
-    vertical_midpoint = north
-    vertical_length = 2 * north + 1
+    vert_mid = north
+    vert_len = 2 * north + 1
 else:
-    vertical_midpoint = south
-    vertical_length = 2 * south + 1
+    vert_mid = south
+    vert_len = 2 * south + 1
 
 if east > west:
-    horizontal_midpoint = east
-    horizontal_length = 2 * east + 1
+    horizon_mid = east
+    horizon_len = 2 * east + 1
 else:
-    horizontal_midpoint = west
-    horizontal_length = 2 * west + 1 
+    horizon_mid = west
+    horizon_len = 2 * west + 1 
 
-print(vertical_midpoint, vertical_length, horizontal_midpoint, horizontal_length)
+# print(vert_mid, vert_len, horizon_mid, horizon_len) # Checks the dimensions of the array.
+
+# Zeros array of type int with dimensions (horizon_len, vert_len)
+neighborhood = np.zeros((horizon_len, vert_len), dtype = np.int)
+
+# print(neighborhood) # Checks array is right style.
+
+# Makes two new variables for house locations.
+x = horizon_mid
+y = vert_mid
+
+for i in range(0, len(input_string)):
+    # Adds presents Santa gives to locations in the array.
+
+    neighborhood[x][y] += 1 # Adds a gift to the house before moving.
+
+    # This switch statement moves Santa.
+    if input_string[i] == '^':
+        y += 1
+    elif input_string[i] == '>':
+        x += 1
+    elif input_string[i] == 'v':
+        y -= 1
+    elif input_string[i] == '<':
+        x -= 1
+        
+    neighborhood[x][y] += 1 # Adds a gift to the house after moving.
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+homes_with_gifts = 0 # Will be the number of homes with at least one present.
+
+# Iterates through neighborhood looking for homes with more than 0 presents.
+for updown in range(0, vert_len):
+   for leftright in range(0, horizon_len):
+       if neighborhood[leftright][updown] > 0:
+           homes_with_gifts += 1
+           
+print(homes_with_gifts) # 2565 homes are marked with at least one gift!
