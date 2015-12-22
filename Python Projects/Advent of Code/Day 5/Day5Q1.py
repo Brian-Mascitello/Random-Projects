@@ -3,7 +3,8 @@
 Author:     Brian Mascitello
 Date:       12/21/2015
 School:     Arizona State University
-Websites:   http://adventofcode.com/day/4
+Websites:   http://adventofcode.com/day/5
+            http://adventofcode.com/day/5/input
 Info:       --- Day 5: Doesn't He Have Intern-Elves For This? ---
 
     Santa needs help figuring out which strings in his text file are naughty or
@@ -75,7 +76,7 @@ def three_vowels(word):
     vowel_count += word.count('e')
     vowel_count += word.count('i')
     vowel_count += word.count('o')
-    vowel_count += word.count('u')    
+    vowel_count += word.count('u')
     
     # print(vowel_count)    
     

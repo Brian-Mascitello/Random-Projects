@@ -52,6 +52,7 @@ def md5_hash_in_hex(key):
         if hex_message[0:5] == '00000': # Compares indexes [0,4] in hex_message
             return i
             break
+        
     return None
     
 input = 'iwrupvqb' # My input from Advent of Code

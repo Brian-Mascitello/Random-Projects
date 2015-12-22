@@ -126,4 +126,4 @@ for updown in range(0, vert_len):
        if neighborhood[leftright][updown] > 0:
            homes_with_gifts += 1
            
-print(homes_with_gifts) # 2642 homes are marked with at least one gift!
+print(homes_with_gifts) # 2639 homes are marked with at least one gift!
