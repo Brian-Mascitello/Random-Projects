@@ -1,0 +1,32 @@
+Python is both dynamically typed (because it doesn't use explicit datatype declarations) and strongly
+typed (because once a variable has a datatype, it actually matters).
+
+Triple quotes are for multiple line comments.
+
+Doc Strings are what Python programmers call the string right after a function declaration which
+describes what the function does.
+
+######################################################################################################
+
+Example 2.3 - Page 11
+
+Had to cd to folder with odbchelper.py in IPython console before importing.
+
+In [27]: import odbchelper
+
+In [28]: params = {"server":"mpilgrim", "database":"master", "uid":"sa", "pwd":"secret"}
+
+In [29]: print(odbchelper.buildConnectionString(params))
+pwd=secret;database=master;server=mpilgrim;uid=sa
+
+In [30]: print(odbchelper.buildConnectionString.__doc__)
+Build a connection string from a dictionary of parameters.
+    Returns string.
+    
+######################################################################################################
+
+Everything in Python is an object. Strings are objects. Lists are objects. Functions are objects.
+Even modules are objects.
+
+Code blocks are defined by their indentation. By "code block", I mean functions, if statements,
+for loops, while loops, and so forth.
