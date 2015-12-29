@@ -1,3 +1,5 @@
+Dive Into Python - Chapter 2 - Brian Mascitello
+
 Python is both dynamically typed (because it doesn't use explicit datatype declarations) and strongly
 typed (because once a variable has a datatype, it actually matters).
 

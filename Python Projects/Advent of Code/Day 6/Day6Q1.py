@@ -83,7 +83,7 @@ with open('Day6Q1 Input.txt') as current:
         
         string_array = line.split()
         
-        print(string_array)
+        # print(string_array) # used to check string_array
         
         if string_array[0] == 'toggle':
             
@@ -93,4 +93,4 @@ with open('Day6Q1 Input.txt') as current:
             
             million_lights = on_off_lights(string_array, million_lights)
 
-print(np.sum(million_lights))
+print(np.sum(million_lights)) # 400410
