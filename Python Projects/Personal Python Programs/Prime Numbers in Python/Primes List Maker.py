@@ -15,7 +15,7 @@ def prime_finder(termination_number):
 
     primes = [2, 3, 5] # Starts an array for storing & finding prime numbers.
     
-    text_file = open("Prime Numbers.txt", "w")
+    text_file = open("Prime Numbers 10M.txt", "w")
     text_file.write('2,3,5') # Writes the first three primes to file.
 
     for x in range(7, termination_number, 2):
@@ -51,7 +51,7 @@ def prime_finder(termination_number):
 start = time.time()
 
 # 1000000 takes ~ 6.5 seconds on my computer.
-prime_finder(1000000) # Will find prime numbers up to 1000000.
+prime_finder(10000000) # Will find prime numbers up to 1000000.
 
 end = time.time()
 
