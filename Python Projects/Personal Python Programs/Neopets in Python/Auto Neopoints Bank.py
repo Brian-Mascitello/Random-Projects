@@ -24,7 +24,7 @@ def next_neopoint_per_day(balance, daily, rate):
     This will return an integer value.
     """
     
-    return math.ceil(daily / rate * 100 * 365 - balance)
+    return math.ceil(daily / rate * 100 * 365 - (balance - 25))
 
 def rate_finder(balance):
     """
@@ -111,7 +111,7 @@ def yearly_interest_finder(balance, rate):
 
 print('\nWelcome to the Python Auto Neopoints Bank Calculator')
 
-balance = int(input('Enter your current Neopoint balance: '))
+balance = int(input('Enter your current Neopoint balance: ').replace(',', ''))
 
 account_pair = rate_finder(balance)
 (account, rate) = account_pair
@@ -133,6 +133,4 @@ daily_interest = daily_interest_finder(balance, rate)
 print('\nDaily Interest: \t', daily_interest, 'NP')
 
 plus_one = next_neopoint_per_day(balance, daily_interest, rate)
-print('Next Neopoint/Day: \t~' + str(plus_one) + 'NP')
-
-
+print('Next Neopoint/Day: \t<' + str(plus_one) + 'NP')
