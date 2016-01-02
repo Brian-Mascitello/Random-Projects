@@ -3,7 +3,7 @@
 Author:     Brian Mascitello
 Date:       1/2/2016
 School:     Arizona State University
-Websites:   http://codingbat.com/prob/p120546
+Websites:   http://codingbat.com/prob/p141905
 Info:       Given two int values, return their sum. Unless the two values are
     the same, then return double their sum. 
 
