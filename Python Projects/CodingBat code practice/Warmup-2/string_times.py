@@ -1,31 +1,30 @@
 # -*- coding: utf-8 -*-
 """
 Author:     Brian Mascitello
-Date:       1/5/2016
+Date:       1/6/2016
 School:     Arizona State University
-Websites:   http://codingbat.com/prob/p147920
-Info:       Given a string, we'll say that the front is the first 3 chars of
-    the string. If the string length is less than 3, the front is whatever is
-    there. Return a new string which is 3 copies of the front. 
+Websites:   http://codingbat.com/prob/p193507
+Info:       Given a string and a non-negative int n, return a larger string
+    that is n copies of the original string. 
 
-    front3('Java') → 'JavJavJav'
-    front3('Chocolate') → 'ChoChoCho'
-    front3('abc') → 'abcabcabc'
+    string_times('Hi', 2) → 'HiHi'
+    string_times('Hi', 3) → 'HiHiHi'
+    string_times('Hi', 1) → 'Hi'
     
-    def front3(str):
+    def string_times(str, n):
 """
 
-def front3(str):
-    # Returns 3 copies of the first 3 letters in str.
+def string_times(str, n):
+    # If n is positive, return string str n times.
 
-    return 3 * str[:3]
+    return n * str
     
 ###############################################################################
 
 """
-# Examples provided
+# Examples provided:
 
-front3('Java') → 'JavJavJav'
-front3('Chocolate') → 'ChoChoCho'
-front3('abc') → 'abcabcabc'
+string_times('Hi', 2) → 'HiHi'
+string_times('Hi', 3) → 'HiHiHi'
+string_times('Hi', 1) → 'Hi'
 """
