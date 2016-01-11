@@ -1,5 +1,5 @@
-White Numbers: 1, 35, 51, 66, 67	 Powerball: 21
-White Numbers: 9, 11, 47, 50, 66	 Powerball: 5
-White Numbers: 32, 36, 39, 40, 51	 Powerball: 11
-White Numbers: 14, 18, 36, 54, 58	 Powerball: 9
-White Numbers: 11, 32, 48, 49, 68	 Powerball: 8
+White Numbers: 4, 25, 48, 50, 55    	 Powerball: 19
+White Numbers: 3, 4, 17, 25, 36    	 Powerball: 24
+White Numbers: 7, 12, 14, 27, 62    	 Powerball: 11
+White Numbers: 21, 25, 42, 51, 62    	 Powerball: 5
+White Numbers: 9, 37, 40, 53, 67    	 Powerball: 22

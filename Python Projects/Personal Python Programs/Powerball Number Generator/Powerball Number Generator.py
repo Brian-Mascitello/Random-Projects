@@ -40,7 +40,7 @@ for i in range(0, data):
     powerball_red = random_ball_selector(1, 26, 1)
     
     whites_string = str(powerball_whites).replace('[','').replace(']','')
-    whites_string = 'White Numbers: ' + whites_string
+    whites_string = 'White Numbers: ' + whites_string + '    '
     
     red_string = str(powerball_red).replace('[','').replace(']','')
     red_string = '\t Powerball: ' + red_string
