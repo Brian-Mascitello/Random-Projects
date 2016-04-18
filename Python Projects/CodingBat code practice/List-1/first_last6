@@ -1,0 +1,29 @@
+"""
+Author:     Brian Mascitello
+Date:       4/17/2016
+School:     Arizona State University
+Websites:   http://codingbat.com/prob/p181624
+Info:       Given an array of ints, return True if 6 appears as either the first or last element in the array. The array
+    will be length 1 or more.
+
+    first_last6([1, 2, 6]) → True
+    first_last6([6, 1, 2, 3]) → True
+    first_last6([13, 6, 1, 2, 3]) → False
+
+    def first_last6(nums):
+Note:       Format slightly different since I am now using PyCharm Community Edition 2016.1.2 rather than Python IDLE.
+"""
+
+
+def first_last6(nums):
+    # Returns True if first or last index is equal to 6.
+
+    if nums[0] == 6 or nums[-1] == 6:
+        return True
+    return False
+
+########################################################################################################################
+
+print(first_last6([1, 2, 6]))  # True
+print(first_last6([6, 1, 2, 3]))  # True
+print(first_last6([13, 6, 1, 2, 3]))  # False
