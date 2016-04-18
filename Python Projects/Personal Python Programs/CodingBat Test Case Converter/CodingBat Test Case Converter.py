@@ -1,11 +1,11 @@
+# -*- coding: utf-8 -*-
 """
 Author:     Brian Mascitello
-Date:       4/17/2016
+Date:       2/22/2016
 School:     Arizona State University
 Info:       Converts the test cases from codingbat to python-print cases.
     (These are actually useful.)
 """
-
 
 def string_converter(input_string):
     """
@@ -20,8 +20,8 @@ def string_converter(input_string):
     
     return_string = 'print(' + return_string
     return_string = return_string.replace('\n', '\nprint(')
+    return_string = return_string.replace(')', ')) #')
     return_string = return_string.replace('  ', ' ')
-    return_string = return_string.replace(')', '))  #')
     
     return return_string
     
