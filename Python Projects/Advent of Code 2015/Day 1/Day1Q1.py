@@ -37,7 +37,7 @@ For example:
 To what floor do the instructions take Santa?
 """
 
-file = open('Day1Q1 Input.txt')
+file = open('Day1Q1 2016 Input.txt')
 input_string = file.read()
 file.close()
 
