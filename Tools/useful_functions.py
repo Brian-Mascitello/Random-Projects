@@ -157,8 +157,8 @@ def fuzzy_compare_columns(df: pd.DataFrame, df_columns: list[str]) -> pd.DataFra
     :return:
     """
 
-    assert type(df) is pd.DataFrame
-    assert all(type(column) is str for column in df_columns)
+    assert isinstance(df, pd.DataFrame)
+    assert all(isinstance(column, str) for column in df_columns)
     assert len(df_columns) > 1
 
     df, df_new_columns = convert_and_clean_combo(df=df, df_columns=df_columns)
@@ -221,7 +221,7 @@ def score_and_categorize_combo(df: pd.DataFrame, column_1: str, column_2: str, d
 
     df[distance_name] = df.apply(lambda x: jf.damerau_levenshtein_distance(x[column_1], x[column_2]), axis=1)
     df[score_name] = df.apply(edit_score_calculator, compare_1=column_1, compare_2=column_2,
-                              edit_distance_column=distance_name)
+                              edit_distance_column=distance_name, axis=1)
     df[overlap_name] = df.apply(overlap_df_columns, column_1=column_1, column_2=column_2, axis=1)
 
     df = categorize_relationship(df=df, score=score_name, overlap=overlap_name, winner=winner_name)
