@@ -232,7 +232,7 @@ def score_and_categorize_combo(df: pd.DataFrame, column_1: str, column_2: str, d
     return df
 
 
-def write_excel_with_widths(df: pd.Dataframe, writer: pd.ExcelWriter, sheet_name: str, min_width: int = 8,
+def write_excel_with_widths(df: pd.DataFrame, writer: pd.ExcelWriter, sheet_name: str, min_width: int = 8,
                             max_width: int = 48, header_buffer: int = 4, index=False) -> None:
     """
     Automatically format Excel column width and writes the df to an Excel file.
